@@ -1,3 +1,5 @@
+import { LAYOUT, THEME } from "../constants.ts"
+
 interface HelpModalProps {
   onClose: () => void
 }
@@ -30,16 +32,18 @@ const SHORTCUTS = [
 ]
 
 export function HelpModal({ onClose }: HelpModalProps) {
+  const { margin, keyColumnWidth } = LAYOUT.helpModal
+
   return (
     <box
       position="absolute"
-      top={2}
-      left={5}
-      right={5}
-      bottom={2}
-      backgroundColor="#1a1b26"
+      top={margin.top}
+      left={margin.left}
+      right={margin.right}
+      bottom={margin.bottom}
+      backgroundColor={THEME.background.dark}
       border
-      borderColor="#7aa2f7"
+      borderColor={THEME.border.focused}
       borderStyle="rounded"
       title="Help - Keyboard Shortcuts"
       titleAlignment="center"
@@ -49,15 +53,15 @@ export function HelpModal({ onClose }: HelpModalProps) {
       <box flexDirection="column" gap={1}>
         {SHORTCUTS.map((section) => (
           <box key={section.category} flexDirection="column">
-            <text fg="#7aa2f7">
+            <text fg={THEME.primary}>
               <strong>{section.category}</strong>
             </text>
             {section.items.map((item) => (
               <box key={item.key} flexDirection="row">
-                <box width={16}>
-                  <text fg="#bb9af7">{item.key}</text>
+                <box width={keyColumnWidth}>
+                  <text fg={THEME.secondary}>{item.key}</text>
                 </box>
-                <text fg="#a9b1d6">{item.desc}</text>
+                <text fg={THEME.text.normal}>{item.desc}</text>
               </box>
             ))}
           </box>
@@ -65,7 +69,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
       </box>
 
       <box marginTop={1}>
-        <text fg="#565f89">Press ? or Esc to close</text>
+        <text fg={THEME.text.dimmed}>Press ? or Esc to close</text>
       </box>
     </box>
   )

@@ -1,4 +1,5 @@
 import type { FlagDefinition, FlagsState, DiffFilterType, OrderType, DateFormatType } from "../types.ts"
+import { THEME } from "../constants.ts"
 
 interface FlagItemProps {
   flag: FlagDefinition
@@ -9,7 +10,8 @@ interface FlagItemProps {
 
 export function FlagItem({ flag, flags, isSelected, isFocused }: FlagItemProps) {
   const selectionIndicator = isSelected && isFocused ? ">" : " "
-  const selectedBg = isSelected && isFocused ? "#24283b" : "transparent"
+  const isActive = isSelected && isFocused
+  const selectedBg = isActive ? THEME.background.selection : THEME.background.transparent
 
   // Get flag value based on type
   const getValue = (): string => {
@@ -58,8 +60,8 @@ export function FlagItem({ flag, flags, isSelected, isFocused }: FlagItemProps) 
 
   return (
     <box height={1} backgroundColor={selectedBg}>
-      <text fg={isSelected && isFocused ? "#c0caf5" : "#a9b1d6"}>
-        <span fg={isSelected && isFocused ? "#7aa2f7" : "#565f89"}>{selectionIndicator} </span>
+      <text fg={isActive ? THEME.text.bright : THEME.text.normal}>
+        <span fg={isActive ? THEME.primary : THEME.text.dimmed}>{selectionIndicator} </span>
         {displayText}
       </text>
     </box>

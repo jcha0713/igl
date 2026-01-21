@@ -2,6 +2,7 @@ import type { TabCategory, FlagsState } from "../types.ts"
 import { TabBar } from "./TabBar.tsx"
 import { FlagItem } from "./FlagItem.tsx"
 import { getFlagsForCategory } from "../utils/flags.ts"
+import { LAYOUT, THEME } from "../constants.ts"
 
 interface SidebarProps {
   activeTab: TabCategory
@@ -23,13 +24,14 @@ export function Sidebar({
   inputTarget,
 }: SidebarProps) {
   const categoryFlags = getFlagsForCategory(activeTab)
+  const borderColor = isFocused ? THEME.border.focused : THEME.border.unfocused
 
   return (
     <box
       flexDirection="column"
-      width={24}
+      width={LAYOUT.sidebar.width}
       border
-      borderColor={isFocused ? "#7aa2f7" : "#414868"}
+      borderColor={borderColor}
       title="Flags"
       titleAlignment="left"
     >
@@ -38,7 +40,9 @@ export function Sidebar({
 
       {/* Separator line using text */}
       <box height={1}>
-        <text fg="#414868">{"─".repeat(22)}</text>
+        <text fg={THEME.border.unfocused}>
+          {"─".repeat(LAYOUT.sidebar.innerWidth)}
+        </text>
       </box>
 
       {/* Flag list */}
@@ -56,13 +60,18 @@ export function Sidebar({
 
       {/* Input bar (appears when editing text flag) */}
       {inputMode && inputTarget && (
-        <box border borderColor="#7aa2f7" paddingLeft={1} height={3}>
+        <box
+          border
+          borderColor={THEME.border.focused}
+          paddingLeft={1}
+          height={LAYOUT.inputBar.height}
+        >
           <box flexDirection="column">
-            <text fg="#565f89">Enter value:</text>
-            <text fg="#c0caf5">
-              <span fg="#7aa2f7">&gt; </span>
+            <text fg={THEME.text.dimmed}>Enter value:</text>
+            <text fg={THEME.text.bright}>
+              <span fg={THEME.primary}>&gt; </span>
               {inputValue}
-              <span fg="#7aa2f7">_</span>
+              <span fg={THEME.primary}>_</span>
             </text>
           </box>
         </box>

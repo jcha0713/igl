@@ -1,3 +1,5 @@
+import { LAYOUT, THEME, getDetailVisibleHeight } from "../constants.ts"
+
 interface DetailViewProps {
   commitHash: string
   output: string
@@ -7,7 +9,7 @@ interface DetailViewProps {
 
 export function DetailView({ commitHash, output, scrollOffset, height }: DetailViewProps) {
   const lines = output.split("\n")
-  const visibleHeight = height - 4 // Account for border and footer
+  const visibleHeight = getDetailVisibleHeight(height)
   const visibleLines = lines.slice(scrollOffset, scrollOffset + visibleHeight)
 
   return (
@@ -16,7 +18,7 @@ export function DetailView({ commitHash, output, scrollOffset, height }: DetailV
       <box
         flexGrow={1}
         border
-        borderColor="#7aa2f7"
+        borderColor={THEME.border.focused}
         title={`Commit ${commitHash}`}
         titleAlignment="left"
         flexDirection="column"
@@ -24,14 +26,14 @@ export function DetailView({ commitHash, output, scrollOffset, height }: DetailV
       >
         {visibleLines.map((line, index) => (
           <box key={scrollOffset + index} height={1}>
-            <text fg="#c0caf5">{line}</text>
+            <text fg={THEME.text.bright}>{line}</text>
           </box>
         ))}
       </box>
 
       {/* Footer with keyboard hints */}
-      <box height={1} backgroundColor="#1a1a2e">
-        <text fg="#565f89">
+      <box height={LAYOUT.detailFooter.height} backgroundColor={THEME.background.bar}>
+        <text fg={THEME.text.dimmed}>
           [Esc] back   [j/k] scroll   [y] yank hash   [q] quit
         </text>
       </box>

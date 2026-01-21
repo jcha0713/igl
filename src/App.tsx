@@ -7,6 +7,7 @@ import { runGitLog, runGitShow } from "./utils/git.ts"
 import { extractCommitHash, isCommitLine } from "./utils/commit-parser.ts"
 import { copyToClipboard } from "./utils/clipboard.ts"
 import { getFlagsForCategory, TAB_ORDER } from "./utils/flags.ts"
+import { LAYOUT, getResultsVisibleHeight, getDetailVisibleHeight } from "./constants.ts"
 
 import { CommandBar } from "./components/CommandBar.tsx"
 import { Sidebar } from "./components/Sidebar.tsx"
@@ -46,8 +47,8 @@ export function App() {
   const maxResultLine = state.results.lines.length - 1
 
   // Calculate visible area for scrolling
-  const resultsHeight = height - 3 // Subtract command bar and borders
-  const detailHeight = height - 2
+  const resultsHeight = getResultsVisibleHeight(height)
+  const detailHeight = getDetailVisibleHeight(height)
 
   // Handle keyboard input
   useKeyboard((key) => {
@@ -116,7 +117,7 @@ export function App() {
         case "j":
         case "down": {
           const lines = state.detail.output.split("\n")
-          const maxOffset = Math.max(0, lines.length - detailHeight + 4)
+          const maxOffset = Math.max(0, lines.length - detailHeight)
           if (state.detail.scrollOffset < maxOffset) {
             dispatch({
               type: "SET_DETAIL_SCROLL_OFFSET",
@@ -200,7 +201,7 @@ export function App() {
             const newLine = state.ui.selectedResultLine + 1
             dispatch({ type: "SET_SELECTED_RESULT_LINE", line: newLine })
             // Auto-scroll if needed
-            const visibleEnd = state.ui.resultsScrollOffset + resultsHeight - 2
+            const visibleEnd = state.ui.resultsScrollOffset + resultsHeight - LAYOUT.border.total
             if (newLine >= visibleEnd) {
               dispatch({
                 type: "SET_RESULTS_SCROLL_OFFSET",
@@ -352,7 +353,7 @@ export function App() {
           commitHash={state.detail.commitHash ?? ""}
           output={state.detail.output}
           scrollOffset={state.detail.scrollOffset}
-          height={detailHeight}
+          height={height}
         />
       )}
 

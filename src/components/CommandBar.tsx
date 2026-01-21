@@ -1,12 +1,14 @@
+import { LAYOUT, THEME } from "../constants.ts"
+
 interface CommandBarProps {
   command: string
 }
 
 export function CommandBar({ command }: CommandBarProps) {
   return (
-    <box height={1} backgroundColor="#1a1a2e">
-      <text fg="#7aa2f7">
-        <span fg="#565f89">&gt; </span>
+    <box height={LAYOUT.commandBar.height} backgroundColor={THEME.background.bar}>
+      <text fg={THEME.primary}>
+        <span fg={THEME.text.dimmed}>&gt; </span>
         {command}
       </text>
     </box>

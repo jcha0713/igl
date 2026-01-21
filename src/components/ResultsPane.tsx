@@ -1,4 +1,5 @@
 import { isCommitLine } from "../utils/commit-parser.ts"
+import { LAYOUT, THEME } from "../constants.ts"
 
 interface ResultsPaneProps {
   lines: string[]
@@ -19,7 +20,7 @@ export function ResultsPane({
   isFocused,
   height,
 }: ResultsPaneProps) {
-  const borderColor = isFocused ? "#7aa2f7" : "#414868"
+  const borderColor = isFocused ? THEME.border.focused : THEME.border.unfocused
 
   // Show loading state
   if (loading) {
@@ -32,7 +33,7 @@ export function ResultsPane({
         titleAlignment="left"
         padding={1}
       >
-        <text fg="#565f89">Loading...</text>
+        <text fg={THEME.text.dimmed}>Loading...</text>
       </box>
     )
   }
@@ -43,12 +44,12 @@ export function ResultsPane({
       <box
         flexGrow={1}
         border
-        borderColor="#f7768e"
+        borderColor={THEME.border.error}
         title="Error"
         titleAlignment="left"
         padding={1}
       >
-        <text fg="#f7768e">{error}</text>
+        <text fg={THEME.error}>{error}</text>
       </box>
     )
   }
@@ -64,13 +65,13 @@ export function ResultsPane({
         titleAlignment="left"
         padding={1}
       >
-        <text fg="#565f89">No commits found</text>
+        <text fg={THEME.text.dimmed}>No commits found</text>
       </box>
     )
   }
 
   // Calculate visible lines based on scroll offset
-  const visibleHeight = height - 2 // Account for border
+  const visibleHeight = height - LAYOUT.border.total
   const visibleLines = lines.slice(scrollOffset, scrollOffset + visibleHeight)
 
   return (
@@ -91,11 +92,11 @@ export function ResultsPane({
           <box
             key={actualIndex}
             height={1}
-            backgroundColor={isSelected ? "#24283b" : "transparent"}
+            backgroundColor={isSelected ? THEME.background.selection : THEME.background.transparent}
           >
-            <text fg={isSelected ? "#c0caf5" : isCommit ? "#a9b1d6" : "#565f89"}>
+            <text fg={isSelected ? THEME.text.bright : isCommit ? THEME.text.normal : THEME.text.dimmed}>
               {isSelected && isFocused ? (
-                <span fg="#7aa2f7">&gt; </span>
+                <span fg={THEME.primary}>&gt; </span>
               ) : (
                 <span fg="transparent">{"  "}</span>
               )}
