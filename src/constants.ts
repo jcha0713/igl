@@ -34,11 +34,6 @@ export const LAYOUT = {
     },
     keyColumnWidth: 16,
   },
-
-  // Input bar in sidebar (height used for scroll calculations, actual rendering auto-sizes)
-  inputBar: {
-    height: 4, // 2 border + 2 content lines (label + input)
-  },
 } as const;
 
 // Calculate derived layout values

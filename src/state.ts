@@ -45,7 +45,6 @@ export const initialState: AppState = {
     selectedFlagIndex: 0,
     selectedResultLine: 0,
     resultsScrollOffset: 0,
-    sidebarScrollOffset: 0,
     inputMode: false,
     inputTarget: null,
     inputValue: "",
@@ -168,16 +167,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ui: {
           ...state.ui,
           resultsScrollOffset: action.offset,
-        },
-      }
-    }
-
-    case "SET_SIDEBAR_SCROLL_OFFSET": {
-      return {
-        ...state,
-        ui: {
-          ...state.ui,
-          sidebarScrollOffset: action.offset,
         },
       }
     }

@@ -63,38 +63,6 @@ export function App() {
   const detailHeight = getDetailVisibleHeight(height)
   const sidebarHeight = getSidebarVisibleHeight(height)
 
-  // Calculate sidebar scroll based on selection
-  const calculateSidebarScroll = useCallback(
-    (selectedIndex: number): number => {
-      // Find the position of the selected item in the flat list (including headers)
-      let position = 0
-      for (const item of sidebarItems) {
-        if (item.type === "flag" && item.selectableIndex === selectedIndex) {
-          break
-        }
-        position++
-      }
-
-      const inputBarHeight =
-        state.ui.inputMode && state.ui.inputTarget ? LAYOUT.inputBar.height : 0
-      const visibleHeight = sidebarHeight - LAYOUT.border.total - inputBarHeight
-      const currentScroll = state.ui.sidebarScrollOffset
-
-      // If selected item is above visible area, scroll up
-      if (position < currentScroll) {
-        return position
-      }
-
-      // If selected item is below visible area, scroll down
-      if (position >= currentScroll + visibleHeight) {
-        return position - visibleHeight + 1
-      }
-
-      return currentScroll
-    },
-    [sidebarItems, sidebarHeight, state.ui.inputMode, state.ui.inputTarget, state.ui.sidebarScrollOffset]
-  )
-
   // Handle keyboard input
   useKeyboard((key) => {
     // Handle help modal first
@@ -236,10 +204,6 @@ export function App() {
         const newIndex = sectionBoundaries[prevSectionIndex]!.startIndex
 
         dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
-        const newScroll = calculateSidebarScroll(newIndex)
-        if (newScroll !== state.ui.sidebarScrollOffset) {
-          dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
-        }
         return
       }
 
@@ -261,10 +225,6 @@ export function App() {
         const newIndex = sectionBoundaries[nextSectionIndex]!.startIndex
 
         dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
-        const newScroll = calculateSidebarScroll(newIndex)
-        if (newScroll !== state.ui.sidebarScrollOffset) {
-          dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
-        }
         return
       }
 
@@ -276,10 +236,6 @@ export function App() {
             ? state.ui.selectedFlagIndex + 1
             : 0
           dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
-          const newScroll = calculateSidebarScroll(newIndex)
-          if (newScroll !== state.ui.sidebarScrollOffset) {
-            dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
-          }
         } else {
           // Results pane navigation
           if (state.ui.selectedResultLine < maxResultLine) {
@@ -305,10 +261,6 @@ export function App() {
             ? state.ui.selectedFlagIndex - 1
             : maxFlagIndex
           dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
-          const newScroll = calculateSidebarScroll(newIndex)
-          if (newScroll !== state.ui.sidebarScrollOffset) {
-            dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
-          }
         } else {
           // Results pane navigation
           if (state.ui.selectedResultLine > 0) {
@@ -413,7 +365,6 @@ export function App() {
               <Sidebar
                 flags={state.flags}
                 selectedIndex={state.ui.selectedFlagIndex}
-                scrollOffset={state.ui.sidebarScrollOffset}
                 isFocused={state.ui.focusedPane === "sidebar"}
                 inputMode={state.ui.inputMode}
                 inputValue={state.ui.inputValue}
