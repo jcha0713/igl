@@ -111,7 +111,7 @@ export function App() {
         dispatch({ type: "EXIT_INPUT_MODE" })
         return
       }
-      if (key.name === "enter") {
+      if (key.name === "enter" || key.name === "return") {
         // Save the value
         const target = state.ui.inputTarget
         const value = state.ui.inputValue.trim()
@@ -327,6 +327,7 @@ export function App() {
 
       case "space":
       case "enter":
+      case "return":
         if (state.ui.focusedPane === "sidebar") {
           const currentFlag = indexToFlag(state.ui.selectedFlagIndex)
           if (!currentFlag) return
@@ -356,7 +357,7 @@ export function App() {
               break
             }
           }
-        } else if (key.name === "enter") {
+        } else if (key.name === "enter" || key.name === "return") {
           // Results pane - open detail view on commit line
           const currentLine = state.results.lines[state.ui.selectedResultLine]
           if (currentLine && isCommitLine(currentLine)) {
