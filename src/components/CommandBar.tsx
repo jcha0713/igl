@@ -1,7 +1,7 @@
-import { LAYOUT, THEME } from "../constants.ts"
+import { LAYOUT, THEME } from "../constants.ts";
 
 interface CommandBarProps {
-  command: string
+  command: string;
 }
 
 export function CommandBar({ command }: CommandBarProps) {
@@ -17,5 +17,5 @@ export function CommandBar({ command }: CommandBarProps) {
         {command}
       </text>
     </box>
-  )
+  );
 }

@@ -1,4 +1,11 @@
-import type { AppState, AppAction, FlagsState, DiffFilterType, OrderType, DateFormatType } from "./types.ts"
+import type {
+  AppState,
+  AppAction,
+  FlagsState,
+  DiffFilterType,
+  OrderType,
+  DateFormatType,
+} from "./types.ts";
 
 export const initialFlagsState: FlagsState = {
   // FORMAT toggles - defaults per PRD
@@ -34,7 +41,7 @@ export const initialFlagsState: FlagsState = {
   dateFormat: "default",
   // DIFF FILTER multi-select
   diffFilter: new Set(),
-}
+};
 
 export const initialState: AppState = {
   flags: initialFlagsState,
@@ -61,24 +68,29 @@ export const initialState: AppState = {
     output: "",
     scrollOffset: 0,
   },
-}
+};
 
-const ORDER_CYCLE: OrderType[] = ["default", "date", "author-date", "topo"]
-const DATE_FORMAT_CYCLE: DateFormatType[] = ["default", "relative", "short", "human"]
+const ORDER_CYCLE: OrderType[] = ["default", "date", "author-date", "topo"];
+const DATE_FORMAT_CYCLE: DateFormatType[] = [
+  "default",
+  "relative",
+  "short",
+  "human",
+];
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case "TOGGLE_FLAG": {
-      const flag = action.flag
-      const currentValue = state.flags[flag]
-      if (typeof currentValue !== "boolean") return state
+      const flag = action.flag;
+      const currentValue = state.flags[flag];
+      if (typeof currentValue !== "boolean") return state;
       return {
         ...state,
         flags: {
           ...state.flags,
           [flag]: !currentValue,
         },
-      }
+      };
     }
 
     case "SET_TEXT_FLAG": {
@@ -88,7 +100,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.flags,
           [action.flag]: action.value,
         },
-      }
+      };
     }
 
     case "SET_NUMBER_FLAG": {
@@ -98,39 +110,39 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.flags,
           [action.flag]: action.value,
         },
-      }
+      };
     }
 
     case "CYCLE_ORDER": {
-      const currentIndex = ORDER_CYCLE.indexOf(state.flags.order)
-      const nextIndex = (currentIndex + 1) % ORDER_CYCLE.length
+      const currentIndex = ORDER_CYCLE.indexOf(state.flags.order);
+      const nextIndex = (currentIndex + 1) % ORDER_CYCLE.length;
       return {
         ...state,
         flags: {
           ...state.flags,
           order: ORDER_CYCLE[nextIndex]!,
         },
-      }
+      };
     }
 
     case "CYCLE_DATE_FORMAT": {
-      const currentIndex = DATE_FORMAT_CYCLE.indexOf(state.flags.dateFormat)
-      const nextIndex = (currentIndex + 1) % DATE_FORMAT_CYCLE.length
+      const currentIndex = DATE_FORMAT_CYCLE.indexOf(state.flags.dateFormat);
+      const nextIndex = (currentIndex + 1) % DATE_FORMAT_CYCLE.length;
       return {
         ...state,
         flags: {
           ...state.flags,
           dateFormat: DATE_FORMAT_CYCLE[nextIndex]!,
         },
-      }
+      };
     }
 
     case "TOGGLE_DIFF_FILTER": {
-      const newSet = new Set(state.flags.diffFilter)
+      const newSet = new Set(state.flags.diffFilter);
       if (newSet.has(action.filter)) {
-        newSet.delete(action.filter)
+        newSet.delete(action.filter);
       } else {
-        newSet.add(action.filter)
+        newSet.add(action.filter);
       }
       return {
         ...state,
@@ -138,7 +150,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.flags,
           diffFilter: newSet,
         },
-      }
+      };
     }
 
     case "SET_SELECTED_FLAG_INDEX": {
@@ -148,7 +160,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.ui,
           selectedFlagIndex: action.index,
         },
-      }
+      };
     }
 
     case "SET_SELECTED_RESULT_LINE": {
@@ -158,7 +170,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.ui,
           selectedResultLine: action.line,
         },
-      }
+      };
     }
 
     case "SET_RESULTS_SCROLL_OFFSET": {
@@ -168,7 +180,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.ui,
           resultsScrollOffset: action.offset,
         },
-      }
+      };
     }
 
     case "SET_FOCUSED_PANE": {
@@ -178,11 +190,11 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.ui,
           focusedPane: action.pane,
         },
-      }
+      };
     }
 
     case "TOGGLE_SIDEBAR": {
-      const newSidebarVisible = !state.ui.sidebarVisible
+      const newSidebarVisible = !state.ui.sidebarVisible;
       return {
         ...state,
         ui: {
@@ -191,7 +203,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           // If hiding sidebar, focus moves to results
           focusedPane: newSidebarVisible ? state.ui.focusedPane : "results",
         },
-      }
+      };
     }
 
     case "ENTER_INPUT_MODE": {
@@ -203,7 +215,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           inputTarget: action.target,
           inputValue: "",
         },
-      }
+      };
     }
 
     case "EXIT_INPUT_MODE": {
@@ -215,7 +227,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           inputTarget: null,
           inputValue: "",
         },
-      }
+      };
     }
 
     case "SET_INPUT_VALUE": {
@@ -225,7 +237,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.ui,
           inputValue: action.value,
         },
-      }
+      };
     }
 
     case "TOGGLE_HELP": {
@@ -235,7 +247,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.ui,
           showHelp: !state.ui.showHelp,
         },
-      }
+      };
     }
 
     case "SET_RESULTS": {
@@ -253,7 +265,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           selectedResultLine: 0,
           resultsScrollOffset: 0,
         },
-      }
+      };
     }
 
     case "SET_RESULTS_LOADING": {
@@ -263,7 +275,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.results,
           loading: action.loading,
         },
-      }
+      };
     }
 
     case "SET_RESULTS_ERROR": {
@@ -274,7 +286,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           error: action.error,
           loading: false,
         },
-      }
+      };
     }
 
     case "ENTER_DETAIL_VIEW": {
@@ -290,7 +302,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           output: action.output,
           scrollOffset: 0,
         },
-      }
+      };
     }
 
     case "EXIT_DETAIL_VIEW": {
@@ -301,7 +313,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           currentView: "main",
           sidebarVisible: true,
         },
-      }
+      };
     }
 
     case "SET_DETAIL_SCROLL_OFFSET": {
@@ -311,10 +323,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ...state.detail,
           scrollOffset: action.offset,
         },
-      }
+      };
     }
 
     default:
-      return state
+      return state;
   }
 }

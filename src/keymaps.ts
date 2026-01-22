@@ -2,14 +2,14 @@
 // Used by HelpModal and footer hints
 
 export interface KeymapItem {
-  key: string
-  shortKey?: string  // Abbreviated version for footer display
-  desc: string
+  key: string;
+  shortKey?: string; // Abbreviated version for footer display
+  desc: string;
 }
 
 export interface KeymapSection {
-  category: string
-  items: KeymapItem[]
+  category: string;
+  items: KeymapItem[];
 }
 
 // Full keymaps used by HelpModal
@@ -53,7 +53,7 @@ export const KEYMAPS: KeymapSection[] = [
       { key: "q", desc: "Quit" },
     ],
   },
-]
+];
 
 // Footer hints for main view (abbreviated)
 export const MAIN_FOOTER_HINTS: KeymapItem[] = [
@@ -62,7 +62,7 @@ export const MAIN_FOOTER_HINTS: KeymapItem[] = [
   { key: "Enter", desc: "select" },
   { key: "y", desc: "yank" },
   { key: "q", desc: "quit" },
-]
+];
 
 // Footer hints for detail view
 export const DETAIL_FOOTER_HINTS: KeymapItem[] = [
@@ -70,9 +70,9 @@ export const DETAIL_FOOTER_HINTS: KeymapItem[] = [
   { key: "j/k", desc: "scroll" },
   { key: "y", desc: "yank hash" },
   { key: "q", desc: "quit" },
-]
+];
 
 // Format hints for footer display
 export function formatFooterHints(hints: KeymapItem[]): string {
-  return hints.map((h) => `[${h.key}] ${h.desc}`).join(" | ")
+  return hints.map((h) => `[${h.key}] ${h.desc}`).join(" | ");
 }

@@ -43,7 +43,12 @@ export const LAYOUT = {
 
 // Calculate derived layout values
 export function getResultsVisibleHeight(totalHeight: number): number {
-  return totalHeight - LAYOUT.commandBar.height - LAYOUT.mainFooter.height - LAYOUT.border.total;
+  return (
+    totalHeight -
+    LAYOUT.commandBar.height -
+    LAYOUT.mainFooter.height -
+    LAYOUT.border.total
+  );
 }
 
 export function getDetailVisibleHeight(totalHeight: number): number {

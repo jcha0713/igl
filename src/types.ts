@@ -6,98 +6,103 @@ export type TabCategory =
   | "date"
   | "diff"
   | "order"
-  | "datefmt"
+  | "datefmt";
 
 // Order options for single-select
-export type OrderType = "default" | "date" | "author-date" | "topo"
+export type OrderType = "default" | "date" | "author-date" | "topo";
 
 // Date format options for single-select
-export type DateFormatType = "default" | "relative" | "short" | "human"
+export type DateFormatType = "default" | "relative" | "short" | "human";
 
 // Diff filter options for multi-select
-export type DiffFilterType = "A" | "D" | "M" | "R"
+export type DiffFilterType = "A" | "D" | "M" | "R";
 
 // Flag types
-export type FlagType = "toggle" | "text" | "number" | "single-select" | "multi-select"
+export type FlagType =
+  | "toggle"
+  | "text"
+  | "number"
+  | "single-select"
+  | "multi-select";
 
 export interface FlagDefinition {
-  id: string
-  label: string
-  type: FlagType
-  category: TabCategory
-  placeholder?: string
-  options?: readonly string[]
-  defaultValue?: boolean | string | number | null
+  id: string;
+  label: string;
+  type: FlagType;
+  category: TabCategory;
+  placeholder?: string;
+  options?: readonly string[];
+  defaultValue?: boolean | string | number | null;
 }
 
 // Application state
 export interface FlagsState {
   // Toggles (FORMAT)
-  oneline: boolean
-  graph: boolean
-  decorate: boolean
-  stat: boolean
-  shortstat: boolean
-  nameOnly: boolean
-  nameStatus: boolean
-  abbrevCommit: boolean
+  oneline: boolean;
+  graph: boolean;
+  decorate: boolean;
+  stat: boolean;
+  shortstat: boolean;
+  nameOnly: boolean;
+  nameStatus: boolean;
+  abbrevCommit: boolean;
   // Toggles (FILTER)
-  noMerges: boolean
-  merges: boolean
-  firstParent: boolean
-  reverse: boolean
-  all: boolean
-  follow: boolean
+  noMerges: boolean;
+  merges: boolean;
+  firstParent: boolean;
+  reverse: boolean;
+  all: boolean;
+  follow: boolean;
   // Text inputs (SEARCH)
-  author: string | null
-  committer: string | null
-  grep: string | null
-  pickaxeS: string | null // -S
-  pickaxeG: string | null // -G
-  path: string | null
+  author: string | null;
+  committer: string | null;
+  grep: string | null;
+  pickaxeS: string | null; // -S
+  pickaxeG: string | null; // -G
+  path: string | null;
   // Text inputs (DATE)
-  since: string | null
-  until: string | null
-  maxCount: number | null // -n
+  since: string | null;
+  until: string | null;
+  maxCount: number | null; // -n
   // Single-select (ORDER) - cycles on Enter
-  order: OrderType
+  order: OrderType;
   // Single-select (DATE FORMAT) - cycles on Enter
-  dateFormat: DateFormatType
+  dateFormat: DateFormatType;
   // Multi-select (DIFF FILTER)
-  diffFilter: Set<DiffFilterType>
+  diffFilter: Set<DiffFilterType>;
 }
 
 export interface UIState {
-  currentView: "main" | "detail"
-  sidebarVisible: boolean
-  focusedPane: "sidebar" | "results"
-  selectedFlagIndex: number // global index across all flags (0 to N-1)
-  selectedResultLine: number
-  resultsScrollOffset: number
-  inputMode: boolean
-  inputTarget: string | null
-  inputValue: string
-  showHelp: boolean
+  currentView: "main" | "detail";
+  sidebarVisible: boolean;
+  focusedPane: "sidebar" | "results";
+  selectedFlagIndex: number; // global index across all flags (0 to N-1)
+  selectedResultLine: number;
+  resultsScrollOffset: number;
+  inputMode: boolean;
+  inputTarget: string | null;
+  inputValue: string;
+  showHelp: boolean;
 }
 
 export interface ResultsState {
-  output: string // raw git output
-  lines: string[] // split for navigation
-  loading: boolean
-  error: string | null
+  output: string; // raw git output
+  lines: string[]; // split for navigation
+  loading: boolean;
+  error: string | null;
 }
 
 export interface DetailState {
-  commitHash: string | null
-  output: string // raw git show output
-  scrollOffset: number
+  commitHash: string | null;
+  output: string; // raw git show output
+  scrollOffset: number;
 }
 
 export interface AppState {
-  flags: FlagsState
-  ui: UIState
-  results: ResultsState
-  detail: DetailState
+  flags: FlagsState;
+  ui: UIState;
+  results: ResultsState;
+  detail: DetailState;
 }
 
 // Action types for state updates
@@ -122,4 +127,4 @@ export type AppAction =
   | { type: "SET_RESULTS_ERROR"; error: string | null }
   | { type: "ENTER_DETAIL_VIEW"; commitHash: string; output: string }
   | { type: "EXIT_DETAIL_VIEW" }
-  | { type: "SET_DETAIL_SCROLL_OFFSET"; offset: number }
+  | { type: "SET_DETAIL_SCROLL_OFFSET"; offset: number };

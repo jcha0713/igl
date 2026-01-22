@@ -1,12 +1,12 @@
-import { LAYOUT, THEME } from "../constants.ts"
-import { KEYMAPS } from "../keymaps.ts"
+import { LAYOUT, THEME } from "../constants.ts";
+import { KEYMAPS } from "../keymaps.ts";
 
 interface HelpModalProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
 export function HelpModal({ onClose }: HelpModalProps) {
-  const { margin, keyColumnWidth } = LAYOUT.helpModal
+  const { margin, keyColumnWidth } = LAYOUT.helpModal;
 
   return (
     <box
@@ -46,5 +46,5 @@ export function HelpModal({ onClose }: HelpModalProps) {
         <text fg={THEME.text.dimmed}>Press ? or Esc to close</text>
       </box>
     </box>
-  )
+  );
 }

@@ -1,17 +1,22 @@
-import { LAYOUT, THEME, getDetailVisibleHeight } from "../constants.ts"
-import { DETAIL_FOOTER_HINTS, formatFooterHints } from "../keymaps.ts"
+import { LAYOUT, THEME, getDetailVisibleHeight } from "../constants.ts";
+import { DETAIL_FOOTER_HINTS, formatFooterHints } from "../keymaps.ts";
 
 interface DetailViewProps {
-  commitHash: string
-  output: string
-  scrollOffset: number
-  height: number
+  commitHash: string;
+  output: string;
+  scrollOffset: number;
+  height: number;
 }
 
-export function DetailView({ commitHash, output, scrollOffset, height }: DetailViewProps) {
-  const lines = output.split("\n")
-  const visibleHeight = getDetailVisibleHeight(height)
-  const visibleLines = lines.slice(scrollOffset, scrollOffset + visibleHeight)
+export function DetailView({
+  commitHash,
+  output,
+  scrollOffset,
+  height,
+}: DetailViewProps) {
+  const lines = output.split("\n");
+  const visibleHeight = getDetailVisibleHeight(height);
+  const visibleLines = lines.slice(scrollOffset, scrollOffset + visibleHeight);
 
   return (
     <box flexDirection="column" flexGrow={1}>
@@ -33,9 +38,14 @@ export function DetailView({ commitHash, output, scrollOffset, height }: DetailV
       </box>
 
       {/* Footer with keyboard hints */}
-      <box height={LAYOUT.detailFooter.height} backgroundColor={THEME.background.bar}>
-        <text fg={THEME.text.dimmed}>{formatFooterHints(DETAIL_FOOTER_HINTS)}</text>
+      <box
+        height={LAYOUT.detailFooter.height}
+        backgroundColor={THEME.background.bar}
+      >
+        <text fg={THEME.text.dimmed}>
+          {formatFooterHints(DETAIL_FOOTER_HINTS)}
+        </text>
       </box>
     </box>
-  )
+  );
 }
