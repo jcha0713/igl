@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useCallback } from "react"
+import { useReducer, useEffect, useCallback, useMemo } from "react"
 import { useKeyboard, useRenderer, useTerminalDimensions } from "@opentui/react"
 import type { DiffFilterType, FlagsState } from "./types.ts"
 import { appReducer, initialState } from "./state.ts"
@@ -6,8 +6,18 @@ import { buildCommand, buildGitLogArgs } from "./utils/command-builder.ts"
 import { runGitLog, runGitShow } from "./utils/git.ts"
 import { extractCommitHash, isCommitLine } from "./utils/commit-parser.ts"
 import { copyToClipboard } from "./utils/clipboard.ts"
-import { getFlagsForCategory, TAB_ORDER } from "./utils/flags.ts"
-import { LAYOUT, getResultsVisibleHeight, getDetailVisibleHeight } from "./constants.ts"
+import {
+  getSelectableCount,
+  getSectionBoundaries,
+  indexToFlag,
+  buildSidebarItems,
+} from "./utils/flags.ts"
+import {
+  LAYOUT,
+  getResultsVisibleHeight,
+  getDetailVisibleHeight,
+  getSidebarVisibleHeight,
+} from "./constants.ts"
 
 import { CommandBar } from "./components/CommandBar.tsx"
 import { Sidebar } from "./components/Sidebar.tsx"
@@ -21,6 +31,11 @@ export function App() {
   const { width, height } = useTerminalDimensions()
 
   const command = buildCommand(state.flags)
+
+  // Memoize sidebar items and section boundaries
+  const sidebarItems = useMemo(() => buildSidebarItems(), [])
+  const sectionBoundaries = useMemo(() => getSectionBoundaries(), [])
+  const maxFlagIndex = getSelectableCount() - 1
 
   // Fetch git log results when flags change
   const fetchResults = useCallback(async () => {
@@ -41,14 +56,44 @@ export function App() {
     fetchResults()
   }, [fetchResults])
 
-  // Get current category flags for navigation
-  const categoryFlags = getFlagsForCategory(state.ui.activeTab)
-  const maxFlagIndex = categoryFlags.length - 1
   const maxResultLine = state.results.lines.length - 1
 
   // Calculate visible area for scrolling
   const resultsHeight = getResultsVisibleHeight(height)
   const detailHeight = getDetailVisibleHeight(height)
+  const sidebarHeight = getSidebarVisibleHeight(height)
+
+  // Calculate sidebar scroll based on selection
+  const calculateSidebarScroll = useCallback(
+    (selectedIndex: number): number => {
+      // Find the position of the selected item in the flat list (including headers)
+      let position = 0
+      for (const item of sidebarItems) {
+        if (item.type === "flag" && item.selectableIndex === selectedIndex) {
+          break
+        }
+        position++
+      }
+
+      const inputBarHeight =
+        state.ui.inputMode && state.ui.inputTarget ? LAYOUT.inputBar.height : 0
+      const visibleHeight = sidebarHeight - LAYOUT.border.total - inputBarHeight
+      const currentScroll = state.ui.sidebarScrollOffset
+
+      // If selected item is above visible area, scroll up
+      if (position < currentScroll) {
+        return position
+      }
+
+      // If selected item is below visible area, scroll down
+      if (position >= currentScroll + visibleHeight) {
+        return position - visibleHeight + 1
+      }
+
+      return currentScroll
+    },
+    [sidebarItems, sidebarHeight, state.ui.inputMode, state.ui.inputTarget, state.ui.sidebarScrollOffset]
+  )
 
   // Handle keyboard input
   useKeyboard((key) => {
@@ -71,7 +116,7 @@ export function App() {
         const target = state.ui.inputTarget
         const value = state.ui.inputValue.trim()
         if (target) {
-          const flag = categoryFlags.find((f) => f.id === target)
+          const flag = indexToFlag(state.ui.selectedFlagIndex)
           if (flag?.type === "number") {
             const numValue = parseInt(value, 10)
             dispatch({
@@ -173,16 +218,53 @@ export function App() {
         return
 
       case "[": {
-        const currentTabIndex = TAB_ORDER.indexOf(state.ui.activeTab)
-        const prevIndex = currentTabIndex > 0 ? currentTabIndex - 1 : TAB_ORDER.length - 1
-        dispatch({ type: "SET_ACTIVE_TAB", tab: TAB_ORDER[prevIndex]! })
+        // Jump to first item of previous section
+        if (state.ui.focusedPane !== "sidebar") return
+
+        // Find current section
+        let currentSectionIndex = 0
+        for (let i = sectionBoundaries.length - 1; i >= 0; i--) {
+          if (state.ui.selectedFlagIndex >= sectionBoundaries[i]!.startIndex) {
+            currentSectionIndex = i
+            break
+          }
+        }
+
+        // Go to previous section (wrap around)
+        const prevSectionIndex =
+          currentSectionIndex > 0 ? currentSectionIndex - 1 : sectionBoundaries.length - 1
+        const newIndex = sectionBoundaries[prevSectionIndex]!.startIndex
+
+        dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
+        const newScroll = calculateSidebarScroll(newIndex)
+        if (newScroll !== state.ui.sidebarScrollOffset) {
+          dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
+        }
         return
       }
 
       case "]": {
-        const currentTabIndex = TAB_ORDER.indexOf(state.ui.activeTab)
-        const nextIndex = (currentTabIndex + 1) % TAB_ORDER.length
-        dispatch({ type: "SET_ACTIVE_TAB", tab: TAB_ORDER[nextIndex]! })
+        // Jump to first item of next section
+        if (state.ui.focusedPane !== "sidebar") return
+
+        // Find current section
+        let currentSectionIndex = 0
+        for (let i = sectionBoundaries.length - 1; i >= 0; i--) {
+          if (state.ui.selectedFlagIndex >= sectionBoundaries[i]!.startIndex) {
+            currentSectionIndex = i
+            break
+          }
+        }
+
+        // Go to next section (wrap around)
+        const nextSectionIndex = (currentSectionIndex + 1) % sectionBoundaries.length
+        const newIndex = sectionBoundaries[nextSectionIndex]!.startIndex
+
+        dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
+        const newScroll = calculateSidebarScroll(newIndex)
+        if (newScroll !== state.ui.sidebarScrollOffset) {
+          dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
+        }
         return
       }
 
@@ -190,10 +272,12 @@ export function App() {
       case "down":
         if (state.ui.focusedPane === "sidebar") {
           if (state.ui.selectedFlagIndex < maxFlagIndex) {
-            dispatch({
-              type: "SET_SELECTED_FLAG_INDEX",
-              index: state.ui.selectedFlagIndex + 1,
-            })
+            const newIndex = state.ui.selectedFlagIndex + 1
+            dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
+            const newScroll = calculateSidebarScroll(newIndex)
+            if (newScroll !== state.ui.sidebarScrollOffset) {
+              dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
+            }
           }
         } else {
           // Results pane navigation
@@ -216,10 +300,12 @@ export function App() {
       case "up":
         if (state.ui.focusedPane === "sidebar") {
           if (state.ui.selectedFlagIndex > 0) {
-            dispatch({
-              type: "SET_SELECTED_FLAG_INDEX",
-              index: state.ui.selectedFlagIndex - 1,
-            })
+            const newIndex = state.ui.selectedFlagIndex - 1
+            dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
+            const newScroll = calculateSidebarScroll(newIndex)
+            if (newScroll !== state.ui.sidebarScrollOffset) {
+              dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
+            }
           }
         } else {
           // Results pane navigation
@@ -240,7 +326,7 @@ export function App() {
       case "space":
       case "enter":
         if (state.ui.focusedPane === "sidebar") {
-          const currentFlag = categoryFlags[state.ui.selectedFlagIndex]
+          const currentFlag = indexToFlag(state.ui.selectedFlagIndex)
           if (!currentFlag) return
 
           switch (currentFlag.type) {
@@ -292,7 +378,7 @@ export function App() {
       case "delete":
         // Clear text flag value
         if (state.ui.focusedPane === "sidebar") {
-          const currentFlag = categoryFlags[state.ui.selectedFlagIndex]
+          const currentFlag = indexToFlag(state.ui.selectedFlagIndex)
           if (currentFlag && (currentFlag.type === "text" || currentFlag.type === "number")) {
             if (currentFlag.type === "number") {
               dispatch({
@@ -322,13 +408,14 @@ export function App() {
             {/* Sidebar */}
             {state.ui.sidebarVisible && (
               <Sidebar
-                activeTab={state.ui.activeTab}
                 flags={state.flags}
                 selectedIndex={state.ui.selectedFlagIndex}
+                scrollOffset={state.ui.sidebarScrollOffset}
                 isFocused={state.ui.focusedPane === "sidebar"}
                 inputMode={state.ui.inputMode}
                 inputValue={state.ui.inputValue}
                 inputTarget={state.ui.inputTarget}
+                visibleHeight={sidebarHeight}
               />
             )}
 

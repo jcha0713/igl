@@ -50,6 +50,10 @@ export function getDetailVisibleHeight(totalHeight: number): number {
   return totalHeight - LAYOUT.detailFooter.height - LAYOUT.border.total - 1 // -1 for padding
 }
 
+export function getSidebarVisibleHeight(totalHeight: number): number {
+  return totalHeight - LAYOUT.commandBar.height
+}
+
 // Tokyo Night color theme
 export const THEME = {
   // Primary colors

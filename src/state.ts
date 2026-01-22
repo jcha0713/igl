@@ -42,10 +42,10 @@ export const initialState: AppState = {
     currentView: "main",
     sidebarVisible: true,
     focusedPane: "sidebar",
-    activeTab: "format",
     selectedFlagIndex: 0,
     selectedResultLine: 0,
     resultsScrollOffset: 0,
+    sidebarScrollOffset: 0,
     inputMode: false,
     inputTarget: null,
     inputValue: "",
@@ -142,17 +142,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       }
     }
 
-    case "SET_ACTIVE_TAB": {
-      return {
-        ...state,
-        ui: {
-          ...state.ui,
-          activeTab: action.tab,
-          selectedFlagIndex: 0,
-        },
-      }
-    }
-
     case "SET_SELECTED_FLAG_INDEX": {
       return {
         ...state,
@@ -179,6 +168,16 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ui: {
           ...state.ui,
           resultsScrollOffset: action.offset,
+        },
+      }
+    }
+
+    case "SET_SIDEBAR_SCROLL_OFFSET": {
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          sidebarScrollOffset: action.offset,
         },
       }
     }

@@ -71,10 +71,10 @@ export interface UIState {
   currentView: "main" | "detail"
   sidebarVisible: boolean
   focusedPane: "sidebar" | "results"
-  activeTab: TabCategory
-  selectedFlagIndex: number // within current tab
+  selectedFlagIndex: number // global index across all flags (0 to N-1)
   selectedResultLine: number
   resultsScrollOffset: number
+  sidebarScrollOffset: number // for scrolling the sidebar list
   inputMode: boolean
   inputTarget: string | null
   inputValue: string
@@ -109,10 +109,10 @@ export type AppAction =
   | { type: "CYCLE_ORDER" }
   | { type: "CYCLE_DATE_FORMAT" }
   | { type: "TOGGLE_DIFF_FILTER"; filter: DiffFilterType }
-  | { type: "SET_ACTIVE_TAB"; tab: TabCategory }
   | { type: "SET_SELECTED_FLAG_INDEX"; index: number }
   | { type: "SET_SELECTED_RESULT_LINE"; line: number }
   | { type: "SET_RESULTS_SCROLL_OFFSET"; offset: number }
+  | { type: "SET_SIDEBAR_SCROLL_OFFSET"; offset: number }
   | { type: "SET_FOCUSED_PANE"; pane: "sidebar" | "results" }
   | { type: "TOGGLE_SIDEBAR" }
   | { type: "ENTER_INPUT_MODE"; target: string }
