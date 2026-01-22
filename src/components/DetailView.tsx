@@ -1,4 +1,5 @@
 import { LAYOUT, THEME, getDetailVisibleHeight } from "../constants.ts"
+import { DETAIL_FOOTER_HINTS, formatFooterHints } from "../keymaps.ts"
 
 interface DetailViewProps {
   commitHash: string
@@ -33,9 +34,7 @@ export function DetailView({ commitHash, output, scrollOffset, height }: DetailV
 
       {/* Footer with keyboard hints */}
       <box height={LAYOUT.detailFooter.height} backgroundColor={THEME.background.bar}>
-        <text fg={THEME.text.dimmed}>
-          [Esc] back   [j/k] scroll   [y] yank hash   [q] quit
-        </text>
+        <text fg={THEME.text.dimmed}>{formatFooterHints(DETAIL_FOOTER_HINTS)}</text>
       </box>
     </box>
   )

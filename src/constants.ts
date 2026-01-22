@@ -19,6 +19,11 @@ export const LAYOUT = {
     height: 1,
   },
 
+  // Main footer with keyboard hints
+  mainFooter: {
+    height: 1,
+  },
+
   // Detail view footer
   detailFooter: {
     height: 1,
@@ -38,7 +43,7 @@ export const LAYOUT = {
 
 // Calculate derived layout values
 export function getResultsVisibleHeight(totalHeight: number): number {
-  return totalHeight - LAYOUT.commandBar.height - LAYOUT.border.total;
+  return totalHeight - LAYOUT.commandBar.height - LAYOUT.mainFooter.height - LAYOUT.border.total;
 }
 
 export function getDetailVisibleHeight(totalHeight: number): number {
@@ -46,7 +51,7 @@ export function getDetailVisibleHeight(totalHeight: number): number {
 }
 
 export function getSidebarVisibleHeight(totalHeight: number): number {
-  return totalHeight - LAYOUT.commandBar.height;
+  return totalHeight - LAYOUT.commandBar.height - LAYOUT.mainFooter.height;
 }
 
 // Tokyo Night color theme

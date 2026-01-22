@@ -1,35 +1,9 @@
 import { LAYOUT, THEME } from "../constants.ts"
+import { KEYMAPS } from "../keymaps.ts"
 
 interface HelpModalProps {
   onClose: () => void
 }
-
-const SHORTCUTS = [
-  { category: "Navigation", items: [
-    { key: "j/k", desc: "Move up/down" },
-    { key: "h/l", desc: "Switch focus (sidebar/results)" },
-    { key: "[/]", desc: "Previous/next tab" },
-    { key: "Tab", desc: "Toggle sidebar" },
-  ]},
-  { category: "Flags", items: [
-    { key: "Space/Enter", desc: "Toggle flag / cycle option" },
-    { key: "Enter", desc: "Edit text flag (opens input)" },
-    { key: "d", desc: "Clear text flag value" },
-  ]},
-  { category: "Results", items: [
-    { key: "Enter", desc: "Open commit detail view" },
-    { key: "y", desc: "Yank command to clipboard" },
-  ]},
-  { category: "Detail View", items: [
-    { key: "Esc", desc: "Return to main view" },
-    { key: "j/k", desc: "Scroll up/down" },
-    { key: "y", desc: "Yank commit hash" },
-  ]},
-  { category: "General", items: [
-    { key: "?", desc: "Toggle this help" },
-    { key: "q", desc: "Quit" },
-  ]},
-]
 
 export function HelpModal({ onClose }: HelpModalProps) {
   const { margin, keyColumnWidth } = LAYOUT.helpModal
@@ -51,7 +25,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
       padding={1}
     >
       <box flexDirection="column" gap={1}>
-        {SHORTCUTS.map((section) => (
+        {KEYMAPS.map((section) => (
           <box key={section.category} flexDirection="column">
             <text fg={THEME.primary}>
               <strong>{section.category}</strong>

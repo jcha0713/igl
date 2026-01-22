@@ -14,10 +14,12 @@ import {
 } from "./utils/flags.ts"
 import {
   LAYOUT,
+  THEME,
   getResultsVisibleHeight,
   getDetailVisibleHeight,
   getSidebarVisibleHeight,
 } from "./constants.ts"
+import { MAIN_FOOTER_HINTS, formatFooterHints } from "./keymaps.ts"
 
 import { CommandBar } from "./components/CommandBar.tsx"
 import { Sidebar } from "./components/Sidebar.tsx"
@@ -383,6 +385,11 @@ export function App() {
               isFocused={state.ui.focusedPane === "results"}
               height={resultsHeight}
             />
+          </box>
+
+          {/* Footer with keyboard hints */}
+          <box height={LAYOUT.mainFooter.height}>
+            <text fg={THEME.text.dimmed}>{formatFooterHints(MAIN_FOOTER_HINTS)}</text>
           </box>
 
           {/* Command bar */}
