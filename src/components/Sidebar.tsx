@@ -68,13 +68,12 @@ export function Sidebar({
         })}
       </box>
 
-      {/* Input bar (appears when editing text flag) */}
+      {/* Input bar (appears when editing text flag) - auto-sizes to content */}
       {inputMode && inputTarget && (
         <box
           border
           borderColor={THEME.border.focused}
           paddingLeft={1}
-          height={LAYOUT.inputBar.height}
         >
           <box flexDirection="column">
             <text fg={THEME.text.dimmed}>Enter value:</text>

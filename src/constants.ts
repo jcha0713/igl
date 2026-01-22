@@ -4,7 +4,7 @@ export const LAYOUT = {
   sidebar: {
     width: 34,
     get innerWidth() {
-      return this.width - 2 // Account for border
+      return this.width - 2; // Account for border
     },
   },
 
@@ -35,23 +35,23 @@ export const LAYOUT = {
     keyColumnWidth: 16,
   },
 
-  // Input bar in sidebar
+  // Input bar in sidebar (height used for scroll calculations, actual rendering auto-sizes)
   inputBar: {
-    height: 3,
+    height: 4, // 2 border + 2 content lines (label + input)
   },
-} as const
+} as const;
 
 // Calculate derived layout values
 export function getResultsVisibleHeight(totalHeight: number): number {
-  return totalHeight - LAYOUT.commandBar.height - LAYOUT.border.total
+  return totalHeight - LAYOUT.commandBar.height - LAYOUT.border.total;
 }
 
 export function getDetailVisibleHeight(totalHeight: number): number {
-  return totalHeight - LAYOUT.detailFooter.height - LAYOUT.border.total - 1 // -1 for padding
+  return totalHeight - LAYOUT.detailFooter.height - LAYOUT.border.total - 1; // -1 for padding
 }
 
 export function getSidebarVisibleHeight(totalHeight: number): number {
-  return totalHeight - LAYOUT.commandBar.height
+  return totalHeight - LAYOUT.commandBar.height;
 }
 
 // Tokyo Night color theme
@@ -84,4 +84,4 @@ export const THEME = {
 
   // Status colors
   error: "#f7768e", // Red - errors
-} as const
+} as const;
