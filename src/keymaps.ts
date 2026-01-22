@@ -58,9 +58,7 @@ export const KEYMAPS: KeymapSection[] = [
 // Footer hints for main view (abbreviated)
 export const MAIN_FOOTER_HINTS: KeymapItem[] = [
   { key: "?", desc: "help" },
-  { key: "Tab", desc: "sidebar" },
-  { key: "h/l", desc: "panes" },
-  { key: "j/k", desc: "nav" },
+  { key: "h/j/k/l", desc: "nav" },
   { key: "Enter", desc: "select" },
   { key: "y", desc: "yank" },
   { key: "q", desc: "quit" },
@@ -76,5 +74,5 @@ export const DETAIL_FOOTER_HINTS: KeymapItem[] = [
 
 // Format hints for footer display
 export function formatFooterHints(hints: KeymapItem[]): string {
-  return hints.map((h) => `[${h.key}] ${h.desc}`).join("   ")
+  return hints.map((h) => `[${h.key}] ${h.desc}`).join(" | ")
 }
