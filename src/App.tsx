@@ -387,13 +387,13 @@ export function App() {
             />
           </box>
 
+          {/* Command bar */}
+          <CommandBar command={command} />
+
           {/* Footer with keyboard hints */}
           <box height={LAYOUT.mainFooter.height}>
             <text fg={THEME.text.dimmed}>{formatFooterHints(MAIN_FOOTER_HINTS)}</text>
           </box>
-
-          {/* Command bar */}
-          <CommandBar command={command} />
         </>
       ) : (
         /* Detail view */

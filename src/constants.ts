@@ -14,9 +14,9 @@ export const LAYOUT = {
     total: 2,
   },
 
-  // Command bar at bottom
+  // Command bar at bottom (1 content + 2 border)
   commandBar: {
-    height: 1,
+    height: 3,
   },
 
   // Main footer with keyboard hints

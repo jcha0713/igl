@@ -1,3 +1,20 @@
+## DRY Principle - MANDATORY
+
+**NEVER duplicate code, configuration, or data.** Before writing anything:
+
+1. **Search first** - Check if similar logic, constants, or configuration already exists
+2. **Single source of truth** - If you find yourself copying values (strings, numbers, config), extract them to a shared location
+3. **Refactor immediately** - If you notice duplication while working, fix it before proceeding
+
+Violations include:
+- Hardcoding the same string/value in multiple files
+- Copy-pasting logic that could be a shared function
+- Defining the same constants in different places
+- Repeating configuration that should be centralized
+
+When in doubt, create a shared module (e.g., `constants.ts`, `utils.ts`, `config.ts`).
+
+---
 
 Default to using Bun instead of Node.js.
 
