@@ -271,13 +271,14 @@ export function App() {
       case "j":
       case "down":
         if (state.ui.focusedPane === "sidebar") {
-          if (state.ui.selectedFlagIndex < maxFlagIndex) {
-            const newIndex = state.ui.selectedFlagIndex + 1
-            dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
-            const newScroll = calculateSidebarScroll(newIndex)
-            if (newScroll !== state.ui.sidebarScrollOffset) {
-              dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
-            }
+          // Wrap around: if at end, go to beginning
+          const newIndex = state.ui.selectedFlagIndex < maxFlagIndex
+            ? state.ui.selectedFlagIndex + 1
+            : 0
+          dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
+          const newScroll = calculateSidebarScroll(newIndex)
+          if (newScroll !== state.ui.sidebarScrollOffset) {
+            dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
           }
         } else {
           // Results pane navigation
@@ -299,13 +300,14 @@ export function App() {
       case "k":
       case "up":
         if (state.ui.focusedPane === "sidebar") {
-          if (state.ui.selectedFlagIndex > 0) {
-            const newIndex = state.ui.selectedFlagIndex - 1
-            dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
-            const newScroll = calculateSidebarScroll(newIndex)
-            if (newScroll !== state.ui.sidebarScrollOffset) {
-              dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
-            }
+          // Wrap around: if at beginning, go to end
+          const newIndex = state.ui.selectedFlagIndex > 0
+            ? state.ui.selectedFlagIndex - 1
+            : maxFlagIndex
+          dispatch({ type: "SET_SELECTED_FLAG_INDEX", index: newIndex })
+          const newScroll = calculateSidebarScroll(newIndex)
+          if (newScroll !== state.ui.sidebarScrollOffset) {
+            dispatch({ type: "SET_SIDEBAR_SCROLL_OFFSET", offset: newScroll })
           }
         } else {
           // Results pane navigation
