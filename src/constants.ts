@@ -37,7 +37,6 @@ export const LAYOUT = {
       left: 5,
       right: 5,
     },
-    keyColumnWidth: 16,
   },
 } as const;
 
