@@ -27,16 +27,22 @@ export function HelpModal({ scrollOffset, onClose }: HelpModalProps) {
   const left = Math.floor((width - modalWidth) / 2);
   const top = Math.floor((height - modalHeight) / 2);
 
-  // Flatten keymaps into rows
+  // Flatten keymaps into rows with spacing between sections
   const allRows = useMemo(() => {
     const rows: Array<
       | { type: "header"; category: string }
       | { type: "item"; key: string; desc: string }
+      | { type: "spacer" }
     > = [];
-    for (const section of KEYMAPS) {
+    for (let i = 0; i < KEYMAPS.length; i++) {
+      const section = KEYMAPS[i];
       rows.push({ type: "header", category: section.category });
       for (const item of section.items) {
         rows.push({ type: "item", key: item.key, desc: item.desc });
+      }
+      // Add spacer between sections (except after the last one)
+      if (i < KEYMAPS.length - 1) {
+        rows.push({ type: "spacer" });
       }
     }
     return rows;
@@ -79,6 +85,8 @@ export function HelpModal({ scrollOffset, onClose }: HelpModalProps) {
                 <strong>{row.category}</strong>
               </text>
             </box>
+          ) : row.type === "spacer" ? (
+            <box key={i} height={1} />
           ) : (
             <box key={i} flexDirection="row" height={1}>
               <box width={16}>
