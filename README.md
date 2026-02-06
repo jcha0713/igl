@@ -27,7 +27,7 @@ bun run src/index.tsx
 |-----|--------|
 | `j/k` | Move up/down |
 | `h/l` | Switch focus (sidebar/results) |
-| `[/]` | Previous/next tab |
+| `[/]` | Previous/next section |
 | `Tab` | Toggle sidebar |
 
 ### Flags
@@ -35,7 +35,7 @@ bun run src/index.tsx
 |-----|--------|
 | `Space/Enter` | Toggle flag / cycle option |
 | `Enter` | Edit text flag (opens input) |
-| `d` | Clear text flag value |
+| `d` / `Delete` | Clear text flag value |
 
 ### Results
 | Key | Action |
