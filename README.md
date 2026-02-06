@@ -2,6 +2,8 @@
 
 A terminal UI tool that lets you interactively build and execute `git log` queries by toggling flags and seeing results update in real-time.
 
+![igl preview](screen.png)
+
 ## Installation
 
 ```bash
