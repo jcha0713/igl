@@ -83,6 +83,7 @@ export interface UIState {
   inputTarget: string | null;
   inputValue: string;
   showHelp: boolean;
+  helpScrollOffset: number;
 }
 
 export interface ResultsState {
@@ -122,6 +123,7 @@ export type AppAction =
   | { type: "EXIT_INPUT_MODE" }
   | { type: "SET_INPUT_VALUE"; value: string }
   | { type: "TOGGLE_HELP" }
+  | { type: "SET_HELP_SCROLL_OFFSET"; offset: number }
   | { type: "SET_RESULTS"; output: string; lines: string[] }
   | { type: "SET_RESULTS_LOADING"; loading: boolean }
   | { type: "SET_RESULTS_ERROR"; error: string | null }

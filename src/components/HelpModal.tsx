@@ -4,88 +4,105 @@ import { THEME } from "../constants.ts";
 import { KEYMAPS } from "../keymaps.ts";
 
 interface HelpModalProps {
+  scrollOffset: number;
   onClose: () => void;
 }
 
-export function HelpModal({ onClose }: HelpModalProps) {
+export function HelpModal({ scrollOffset, onClose }: HelpModalProps) {
   const { width, height } = useTerminalDimensions();
 
-  // Responsive sizing - modal takes up most of the screen but leaves margin
+  // Responsive sizing
   const modalWidth = useMemo(() => {
-    const maxWidth = 80;
+    const maxWidth = 70;
     const minWidth = 50;
-    const margin = 4;
-    const available = width - margin * 2;
+    const available = width - 8;
     return Math.max(minWidth, Math.min(maxWidth, available));
   }, [width]);
 
   const modalHeight = useMemo(() => {
-    const margin = 2;
-    const available = height - margin * 2;
-    return Math.max(15, available);
+    const available = height - 4;
+    return Math.max(12, available);
   }, [height]);
 
-  // Center the modal
   const left = Math.floor((width - modalWidth) / 2);
   const top = Math.floor((height - modalHeight) / 2);
 
-  // Calculate column widths for key/desc layout
-  const keyWidth = 18;
-  const descWidth = modalWidth - keyWidth - 6; // 6 for padding/borders
+  // Flatten keymaps into rows
+  const allRows = useMemo(() => {
+    const rows: Array<
+      | { type: "header"; category: string }
+      | { type: "item"; key: string; desc: string }
+    > = [];
+    for (const section of KEYMAPS) {
+      rows.push({ type: "header", category: section.category });
+      for (const item of section.items) {
+        rows.push({ type: "item", key: item.key, desc: item.desc });
+      }
+    }
+    return rows;
+  }, []);
+
+  // Calculate visible area (parent box has height={modalHeight} with border and title)
+  // Border takes 2 lines, title takes 1 line, footer takes 1 line
+  const footerHeight = 1;
+  const contentHeight = modalHeight - 2 - 1 - footerHeight; // borders - title - footer
+
+  // Reserve 1 row for scroll indicator if content overflows
+  const needsIndicator = allRows.length > contentHeight;
+  const availableRows = needsIndicator ? contentHeight - 1 : contentHeight;
+  
+  const maxScroll = Math.max(0, allRows.length - availableRows);
+  const visibleRows = allRows.slice(scrollOffset, scrollOffset + availableRows);
+
+  const scrollPercent = maxScroll > 0 ? Math.round((scrollOffset / maxScroll) * 100) : 0;
 
   return (
-    <>
-      {/* Modal container */}
-      <box
-        position="absolute"
-        top={top}
-        left={left}
-        width={modalWidth}
-        height={modalHeight}
-        backgroundColor={THEME.background.dark}
-        border
-        borderStyle="rounded"
-        borderColor={THEME.border.focused}
-        flexDirection="column"
-        title="Keybindings"
-      >
-        {/* Scrollable content area */}
-        <scrollbox flexGrow={1} paddingLeft={2} paddingRight={2}>
-          <box flexDirection="column" gap={1}>
-            {KEYMAPS.map((section) => (
-              <box key={section.category} flexDirection="column">
-                {/* Section header */}
-                <box height={1} marginTop={1} marginBottom={1}>
-                  <text fg={THEME.secondary}>
-                    <strong>{section.category}</strong>
-                  </text>
-                </box>
-
-                {/* Key bindings */}
-                {section.items.map((item) => (
-                  <box
-                    key={`${section.category}-${item.key}`}
-                    flexDirection="row"
-                    height={1}
-                  >
-                    <box width={keyWidth}>
-                      <text fg={THEME.primary}>{item.key}</text>
-                    </box>
-                    <box width={descWidth}>
-                      <text fg={THEME.text.normal}>{item.desc}</text>
-                    </box>
-                  </box>
-                ))}
-              </box>
-            ))}
-
-            {/* Footer hint */}
-            <box height={1} marginTop={2} marginBottom={1}>
-              <text fg={THEME.text.dimmed}>Press ? or Esc to close</text>
+    <box
+      position="absolute"
+      top={top}
+      left={left}
+      width={modalWidth}
+      height={modalHeight}
+      backgroundColor={THEME.background.dark}
+      border
+      borderStyle="rounded"
+      borderColor={THEME.border.focused}
+      flexDirection="column"
+      title="Keybindings"
+    >
+      {/* Content area - explicit height, no margins on children */}
+      <box flexDirection="column" height={availableRows} paddingLeft={2} paddingRight={2}>
+        {visibleRows.map((row, i) =>
+          row.type === "header" ? (
+            <box key={i} height={1}>
+              <text fg={THEME.secondary}>
+                <strong>{row.category}</strong>
+              </text>
             </box>
-          </box>
-        </scrollbox>
+          ) : (
+            <box key={i} flexDirection="row" height={1}>
+              <box width={16}>
+                <text fg={THEME.primary}>{row.key}</text>
+              </box>
+              <text fg={THEME.text.normal}>{row.desc}</text>
+            </box>
+          )
+        )}
       </box>
-    </>
+
+      {/* Scroll indicator - shown when content overflows */}
+      {needsIndicator && (
+        <box height={1} paddingLeft={2} paddingRight={2}>
+          <text fg={THEME.text.dimmed}>
+            {scrollPercent}% - Press j/k to scroll
+          </text>
+        </box>
+      )}
+
+      {/* Footer */}
+      <box height={1} paddingLeft={2} paddingRight={2}>
+        <text fg={THEME.text.dimmed}>Press ? or Esc to close</text>
+      </box>
+    </box>
   );
 }

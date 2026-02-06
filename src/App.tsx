@@ -16,7 +16,7 @@ import {
   LAYOUT,
   THEME,
 } from "./constants.ts";
-import { formatFooterHints, MAIN_FOOTER_HINTS } from "./keymaps.ts";
+import { formatFooterHints, KEYMAPS, MAIN_FOOTER_HINTS } from "./keymaps.ts";
 import { appReducer, initialState } from "./state.ts";
 import type { DiffFilterType, FlagsState } from "./types.ts";
 import { copyToClipboard } from "./utils/clipboard.ts";
@@ -68,12 +68,44 @@ export function App() {
   const detailHeight = getDetailVisibleHeight(height);
   const sidebarHeight = getSidebarVisibleHeight(height);
 
+  // Calculate help modal scroll parameters
+  const helpModalHeight = Math.max(12, height - 4);
+  const helpFooterHeight = 1;
+  const helpContentHeight = helpModalHeight - 2 - 1 - helpFooterHeight;
+  const totalHelpRows = KEYMAPS.reduce((acc, s) => acc + 1 + s.items.length, 0);
+  const helpNeedsIndicator = totalHelpRows > helpContentHeight;
+  const helpAvailableRows = helpNeedsIndicator ? helpContentHeight - 1 : helpContentHeight;
+  const maxHelpScroll = Math.max(0, totalHelpRows - helpAvailableRows);
+
   // Handle keyboard input
   useKeyboard((key) => {
     // Handle help modal first
     if (state.ui.showHelp) {
-      if (key.name === "escape" || key.name === "?") {
-        dispatch({ type: "TOGGLE_HELP" });
+      switch (key.name) {
+        case "escape":
+        case "?":
+          dispatch({ type: "TOGGLE_HELP" });
+          return;
+        case "j":
+        case "down":
+          dispatch({
+            type: "SET_HELP_SCROLL_OFFSET",
+            offset: Math.min(maxHelpScroll, state.ui.helpScrollOffset + 1),
+          });
+          return;
+        case "k":
+        case "up":
+          dispatch({
+            type: "SET_HELP_SCROLL_OFFSET",
+            offset: Math.max(0, state.ui.helpScrollOffset - 1),
+          });
+          return;
+        case "g":
+          dispatch({ type: "SET_HELP_SCROLL_OFFSET", offset: 0 });
+          return;
+        case "G":
+          dispatch({ type: "SET_HELP_SCROLL_OFFSET", offset: maxHelpScroll });
+          return;
       }
       return;
     }
@@ -431,7 +463,10 @@ export function App() {
 
       {/* Help modal overlay */}
       {state.ui.showHelp && (
-        <HelpModal onClose={() => dispatch({ type: "TOGGLE_HELP" })} />
+        <HelpModal
+          scrollOffset={state.ui.helpScrollOffset}
+          onClose={() => dispatch({ type: "TOGGLE_HELP" })}
+        />
       )}
     </box>
   );

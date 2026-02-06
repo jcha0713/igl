@@ -56,6 +56,7 @@ export const initialState: AppState = {
     inputTarget: null,
     inputValue: "",
     showHelp: false,
+    helpScrollOffset: 0,
   },
   results: {
     output: "",
@@ -241,11 +242,23 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     case "TOGGLE_HELP": {
+      const newShowHelp = !state.ui.showHelp;
       return {
         ...state,
         ui: {
           ...state.ui,
-          showHelp: !state.ui.showHelp,
+          showHelp: newShowHelp,
+          helpScrollOffset: newShowHelp ? 0 : state.ui.helpScrollOffset,
+        },
+      };
+    }
+
+    case "SET_HELP_SCROLL_OFFSET": {
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          helpScrollOffset: action.offset,
         },
       };
     }
